@@ -24,21 +24,47 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     
+    - name: Install Visual Studio Build Tools
+      run: |
+        choco install visualstudio2019buildtools -y
+        choco install visualstudio2019-workload-vctools -y
+    
     - name: Install dependencies
       run: npm install
     
-    - name: Build and release Electron app
-      uses: samuelmeuli/action-electron-builder@v1
-      with:
-        github_token: ${{ secrets.github_token }}
-        # 这个 action 会自动处理所有构建工具和兼容性问题
-        
-    - name: Upload build artifacts (fallback)
+    - name: Build application
+      run: |
+        npm run package
+        dir dist\
+    
+    - name: Upload build artifacts
       uses: actions/upload-artifact@v4
-      if: failure()
       with:
-        name: build-failure-logs
-        path: |
-          package.json
-          package-lock.json
-          .github/workflows/build-windows.yml
+        name: one-person-group-windows
+        path: dist/
+    
+    - name: Create Release
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v2
+      with:
+        files: dist/OnePersonGroup-Setup.exe
+        tag_name: v${{ github.run_number }}
+        name: One Person Group v${{ github.run_number }}
+        body: |
+          自动构建的Windows安装包
+          
+          ## 新特性
+          - 完整的多智能体系统 (165个专家AI)
+          - 微信公众号自动化集成
+          - Web图形控制台
+          - 系统托盘管理
+          
+          ## 安装说明
+          1. 下载OnePersonGroup-Setup.exe
+          2. 双击运行安装程序
+          3. 配置微信公众号信息
+          4. 开始使用一人集团
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
