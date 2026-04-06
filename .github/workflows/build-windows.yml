@@ -33,6 +33,8 @@ jobs:
       run: npm install
     
     - name: Build application
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         npm run package
         dir dist\
@@ -47,7 +49,7 @@ jobs:
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v2
       with:
-        files: dist/OnePersonGroup-Setup.exe
+        files: dist/OnePersonGroup*.exe
         tag_name: v${{ github.run_number }}
         name: One Person Group v${{ github.run_number }}
         body: |
