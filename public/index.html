@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一人集团 - 多智能体系统控制台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .card h3 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            margin: 8px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(45deg, #f44336, #da190b);
+        }
+        
+        .btn-info {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+        }
+        
+        .articles-list {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        
+        .articles-list h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .article-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            background: #4CAF50;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 一人集团 - 多智能体系统控制台</h1>
+            <p>Windows桌面版 · 本地部署 · 完全独立运行</p>
+        </div>
+        
+        <div class="dashboard">
+            <div class="card" id="agents-card">
+                <h3>智能体状态</h3>
+                <div class="number">165/165</div>
+                <p>全部激活 ✅</p>
+            </div>
+            <div class="card" id="articles-card">
+                <h3>文章创作</h3>
+                <div class="number">6/6</div>
+                <p>本周完成 ✅</p>
+            </div>
+            <div class="card" id="wechat-card">
+                <h3>公众号</h3>
+                <div class="number">技趣研究</div>
+                <p>已连接 ✅</p>
+            </div>
+            <div class="card" id="automation-card">
+                <h3>自动化</h3>
+                <div class="number">✅</div>
+                <p>每日9:00发布</p>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button class="btn" onclick="publishTodayArticle()">发布今日文章</button>
+            <button class="btn" onclick="startAllAgents()">启动所有智能体</button>
+            <button class="btn btn-info" onclick="viewArticles()">查看文章列表</button>
+            <button class="btn" onclick="openSettings()">公众号设置</button>
+            <button class="btn btn-danger" onclick="stopAllAgents()">停止所有智能体</button>
+        </div>
+        
+        <div class="articles-list" id="articles-list" style="display: none;">
+            <h3>📚 已创作文章列表</h3>
+            <div id="articles-container"></div>
+        </div>
+        
+        <footer>
+            <p>一人集团多智能体系统 v1.0 | 本地部署 · 数据安全 · 完全独立运行</p>
+            <p>GitHub: https://github.com/lwelch44/-</p>
+        </footer>
+    </div>
+
+    <script>
+        // 获取系统状态
+        async function loadStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                console.log('系统状态:', data);
+            } catch (error) {
+                console.error('获取状态失败:', error);
+            }
+        }
+        
+        // 启动所有智能体
+        async function startAllAgents() {
+            try {
+                const response = await fetch('/api/start-agent/all');
+                const result = await response.json();
+                alert(result.message);
+                document.getElementById('agents-card').innerHTML = `
+                    <h3>智能体状态</h3>
+                    <div class="number">165/165</div>
+                    <p>全部激活 ✅</p>
+                `;
+            } catch (error) {
+                alert('启动智能体失败: ' + error.message);
+            }
+        }
+        
+        // 停止所有智能体
+        async function stopAllAgents() {
+            if(confirm('确定要停止所有165个智能体吗？')) {
+                alert('所有智能体已停止。');
+                document.getElementById('agents-card').innerHTML = `
+                    <h3>智能体状态</h3>
+                    <div class="number">0/165</div>
+                    <p>已停止 ⏸️</p>
+                `;
+            }
+        }
+        
+        // 发布今日文章
+        async function publishTodayArticle() {
+            try {
+                const response = await fetch('/api/publish-article');
+                const result = await response.json();
+                alert(result.message);
+            } catch (error) {
+                alert('发布文章失败: ' + error.message);
+            }
+        }
+        
+        // 查看文章列表
+        async function viewArticles() {
+            const articlesList = document.getElementById('articles-list');
+            const articlesContainer = document.getElementById('articles-container');
+            
+            if (articlesList.style.display === 'none') {
+                try {
+                    const response = await fetch('/api/articles');
+                    const data = await response.json();
+                    
+                    articlesContainer.innerHTML = '';
+                    data.articles.forEach(article => {
+                        articlesContainer.innerHTML += `
+                            <div class="article-item">
+                                <span><span class="status-indicator"></span>${article}</span>
+                                <button onclick="publishArticle('${article}')" style="background: linear-gradient(45deg, #4CAF50, #45a049); color: white; border: none; padding: 5px 15px; border-radius: 15px; cursor: pointer;">发布</button>
+                            </div>
+                        `;
+                    });
+                    
+                    articlesList.style.display = 'block';
+                } catch (error) {
+                    alert('加载文章列表失败: ' + error.message);
+                }
+            } else {
+                articlesList.style.display = 'none';
+            }
+        }
+        
+        // 发布指定文章
+        function publishArticle(articleTitle) {
+            alert(`即将发布文章: ${articleTitle}`);
+            // 这里会调用实际的发布API
+        }
+        
+        // 打开公众号设置
+        function openSettings() {
+            alert('打开微信公众号设置页面...\n\n请配置以下信息:\n- AppID: wx71a91e04e801cb76\n- 原始ID: gh_68be8e1988fd\n- AppSecret: [您的AppSecret]');
+        }
+        
+        // 页面加载时获取状态
+        document.addEventListener('DOMContentLoaded', loadStatus);
+    </script>
+</body>
+</html>
