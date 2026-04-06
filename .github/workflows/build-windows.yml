@@ -29,6 +29,11 @@ jobs:
         choco install visualstudio2019buildtools -y
         choco install visualstudio2019-workload-vctools -y
     
+    - name: Downgrade NSIS to compatible version
+      run: |
+        choco uninstall nsis -y
+        choco install nsis --version=3.0.5 -y
+    
     - name: Install dependencies
       run: npm install
     
