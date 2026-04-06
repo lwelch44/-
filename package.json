@@ -20,7 +20,6 @@
   "build": {
     "appId": "com.onepersongroup.desktop",
     "productName": "OnePersonGroup",
-    "main": "src/main.js",
     "directories": {
       "output": "dist"
     },
