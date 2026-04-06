@@ -6,7 +6,7 @@
   "author": "lwelch44",
   "scripts": {
     "start": "electron .",
-    "package": "npx electron-builder --win --x64"
+    "package": "electron-builder --win --x64"
   },
   "dependencies": {
     "express": "^4.18.2",
@@ -14,12 +14,12 @@
     "node-schedule": "^2.1.1"
   },
   "devDependencies": {
-    "electron": "^28.0.0",
-    "electron-builder": "^24.0.0"
+    "electron": "28.3.3",
+    "electron-builder": "24.13.3"
   },
   "build": {
     "appId": "com.onepersongroup.desktop",
-    "productName": "一人集团",
+    "productName": "OnePersonGroup",
     "main": "src/main.js",
     "directories": {
       "output": "dist"
@@ -30,7 +30,8 @@
       "package.json"
     ],
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": null
     },
     "nsis": {
       "oneClick": false,
